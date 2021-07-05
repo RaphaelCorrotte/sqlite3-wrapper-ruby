@@ -25,27 +25,55 @@ module Wrapper
     end
 
     def set(key, value)
-      value = value.to_json.to_s
       prepare("INSERT OR REPLACE INTO #{@name}(key, value) VALUES(?, ?)")
-        .execute(key, value)
+        .execute(key, value.to_s)
     end
 
     def get(key, path = nil)
       result = nil
       execute("SELECT * FROM #{@name}") do |row|
-        result = row.to_hash if row[0] == key
+        result = row["value"] if row[0] == key
       end
 
       unless path.nil?
-        case path.class
-        when String
-          puts "String"
+        if path.instance_of? String
           return result[path] if result[path]
-        when Array
+        elsif path.instance_of? Array
           path.each do |p|
-            result = result[p] if result[p]
+            result = JSON.parse(result.gsub(/:([a-zA-z\d]+)/, '"\\1"').gsub("=>", ": ")) if result.instance_of?(String)
+            if result[p]
+              result = result[p]
+            else
+              result = false
+              break
+            end
           end
-        else return result end
+        else nil end
+      end
+
+      result
+    end
+
+    def has(key, path = nil)
+      result = nil
+      execute("SELECT * FROM #{@name}") do |row|
+        result = row["value"] if row[0] == key
+      end
+
+      unless path.nil?
+        if path.instance_of? String
+          return true if result[path]
+        elsif path.instance_of? Array
+          path.each do |p|
+            result = JSON.parse(result.gsub(/:([a-zA-z\d]+)/, '"\\1"').gsub("=>", ": ")) if result.instance_of?(String)
+            if result[p]
+              result = true
+            else
+              result = false
+              break
+            end
+          end
+        else false end
       end
 
       result
