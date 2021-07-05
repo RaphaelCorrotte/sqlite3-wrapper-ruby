@@ -9,9 +9,12 @@ test = Sqlite3Wrapper.new({
                           })
 
 test.set("rr", {
-           :value => {
-             :test => "test!"
-            }
+           :aa => {
+             :test => {
+               :test2 => "Salut"
+             }
+           }
          })
 
-p test.get("rr", %w[value])
+
+puts test.get("rr", %w[aa test])
