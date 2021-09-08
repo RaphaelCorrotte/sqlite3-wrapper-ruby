@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    sqlite3_wrapper (0.1.0)
+    sqlite3_wrapper (0.1.1)
       sqlite3
 
 GEM

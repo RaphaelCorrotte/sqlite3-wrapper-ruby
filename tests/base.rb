@@ -17,4 +17,4 @@ test.set("rr", {
          })
 
 
-puts test.get("rr", %w[aa test])
+puts test.has("rr", %w[aa test test2 Salut])

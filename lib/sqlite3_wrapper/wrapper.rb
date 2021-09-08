@@ -48,7 +48,7 @@ module Wrapper
               break
             end
           end
-        else nil end
+        end
       end
 
       result
@@ -67,7 +67,7 @@ module Wrapper
           path.each do |p|
             result = JSON.parse(result.gsub(/:([a-zA-z\d]+)/, '"\\1"').gsub("=>", ": ")) if result.instance_of?(String)
             if result[p]
-              result = true
+              result = result[p]
             else
               result = false
               break
@@ -76,7 +76,9 @@ module Wrapper
         else false end
       end
 
-      result
+      result ? true : false
+    rescue
+      false
     end
 
     def config
